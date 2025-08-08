@@ -67,6 +67,12 @@
       (concat "[" (mapconcat 'identity tags ", ") "]")
     ""))
 
+(defun lobsters--browse-url (url)
+  "Browse URL using the configured browser function."
+  (if url
+      (funcall lobsters-browser-function url)
+    (message "No URL available")))
+
 (defun lobsters--format-relative-time (timestamp)
   "Format TIMESTAMP as relative time."
   (let* ((time (date-to-time timestamp))
@@ -95,9 +101,7 @@
     ;; Title (make it a clickable link)
     (widget-create 'push-button
                    :notify (lambda (&rest ignore)
-                             (if url
-                                 (eww-browse-url url)
-                               (message "No URL available for this story")))
+                             (lobsters--browse-url url))
                    :help-echo (if url (format "Open: %s" url) "No URL")
                    :format "%[%v%]"
                    title)
@@ -130,7 +134,7 @@
     (lobsters--insert-formatted-text "\n  ")
     (widget-create 'push-button
                    :notify (lambda (&rest ignore)
-                             (eww-browse-url comments-url))
+                             (lobsters--browse-url comments-url))
                    :help-echo (format "View comments: %s" comments-url)
                    " 💬 Comments ")
 
@@ -139,7 +143,7 @@
       (lobsters--insert-formatted-text " ")
       (widget-create 'push-button
                      :notify (lambda (&rest ignore)
-                               (eww-browse-url url))
+                               (lobsters--browse-url url))
                      :help-echo (format "Open link: %s" url)
                      " 🔗 Link "))
 
@@ -179,7 +183,7 @@
                                    nil "#d2691e")
 
   ;; Keyboard shortcuts help
-  (lobsters--insert-formatted-text "Keyboard: (n) Next story | (p) Previous story | (r) Refresh | (q) Quit\n")
+  (lobsters--insert-formatted-text "Keyboard: (n) Next story | (p) Previous story | (r) Refresh | (q) Quit | (b) Browser toggle\n")
 
   (lobsters--insert-separator))
 
@@ -207,6 +211,18 @@
     (unless (search-backward-regexp separator-regex nil t)
       (goto-char (point-min)))
     (forward-line 1)))
+
+(defun lobsters--toggle-browser ()
+  "Toggle between eww and system browser."
+  (interactive)
+  (setq lobsters-browser-function
+        (if (eq lobsters-browser-function 'eww)
+            'browse-url-default-browser
+          'eww))
+  (message "Browser set to: %s"
+           (if (eq lobsters-browser-function 'eww)
+               "eww (internal)"
+               "system browser")))
 
 (defun lobsters--quit ()
   "Quit the Lobsters buffer."
@@ -242,6 +258,7 @@
     (local-set-key (kbd "r") 'lobsters--refresh-current-feed)
     (local-set-key (kbd "q") 'lobsters--quit)
     (local-set-key (kbd "g") 'lobsters--refresh-current-feed)
+    (local-set-key (kbd "b") 'lobsters--toggle-browser)
 
     ;; Enable minor mode and finish setup
     (lobsters-mode 1)

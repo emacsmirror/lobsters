@@ -55,17 +55,22 @@
   (mapcar (lambda (story)
             (list
              (cons 'short-id (cdr (assoc 'short_id story)))
-             (cons 'title (cdr (assoc 'title story)))
+             (cons 'title (lobsters--clean-string (cdr (assoc 'title story))))
              (cons 'url (cdr (assoc 'url story)))
              (cons 'score (cdr (assoc 'score story)))
              (cons 'comment-count (cdr (assoc 'comment_count story)))
-             (cons 'submitter (cdr (assoc 'submitter_user story)))
+             (cons 'submitter (lobsters--clean-string (cdr (assoc 'submitter_user story))))
              (cons 'tags (cdr (assoc 'tags story)))
              (cons 'created-at (cdr (assoc 'created_at story)))
              (cons 'comments-url (cdr (assoc 'comments_url story)))
              (cons 'short-id-url (cdr (assoc 'short_id_url story)))
-             (cons 'description (or (cdr (assoc 'description_plain story)) ""))))
+             (cons 'description (lobsters--clean-string (or (cdr (assoc 'description_plain story)) "")))))
           raw-stories))
+
+(defun lobsters--clean-string (str)
+  "Clean STR by removing carriage returns and other unwanted characters."
+  (when str
+    (replace-regexp-in-string "\r" "" (string-trim str))))
 
 (defun lobsters--get-all-stories ()
   "Get all stories."

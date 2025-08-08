@@ -69,6 +69,11 @@ You can customize these variables:
 ```elisp
 ;; Automatic refresh interval in seconds (nil to disable)
 (setq lobsters-auto-refresh-interval nil)
+
+;; Browser function to use for opening links
+(setq lobsters-browser-function 'eww)  ; Use eww (internal browser)
+;; or
+(setq lobsters-browser-function 'browse-url-default-browser)  ; Use system browser
 ```
 
 ## Contributing

@@ -32,6 +32,13 @@
                  (integer :tag "Seconds"))
   :group 'lobsters)
 
+(defcustom lobsters-browser-function 'eww
+  "Function to use for browsing URLs."
+  :type '(choice (const :tag "Use eww (internal browser)" eww)
+                 (const :tag "Use system browser" browse-url-default-browser)
+                 (function :tag "Custom browser function"))
+  :group 'lobsters)
+
 ;; API endpoints
 (defconst lobsters--hottest-endpoint "https://lobste.rs/hottest.json")
 (defconst lobsters--newest-endpoint "https://lobste.rs/newest.json")

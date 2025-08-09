@@ -1,6 +1,11 @@
-;;; lobsters-variables.el --- A Lobsters client for Emacs -*- lexical-binding: t -*- -*- coding: utf-8 -*-
+;;; lobsters-variables.el --- Variables for the Lobsters client -*- lexical-binding: t -*- -*- coding: utf-8 -*-
 
-;; SPDX-License-Identifier: GPL-3.0
+;; SPDX-License-Identifier: GPL-3.0-or-later
+
+;; Author: Andros Fenollosa <hi@andros.dev>
+;; Version: 1.0
+;; URL: https://github.com/youruser/lobsters-el
+;; Package-Requires: ((emacs "25.1") (request "0.2.0") (visual-fill-column "2.4"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -14,25 +19,30 @@
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ;; General Public License for more details.
 
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see
+;; <http://www.gnu.org/licenses/>.
+
+
 ;;; Commentary:
 
 ;; Configuration variables for the Lobsters Emacs client.
 
 ;;; Code:
 
-(defcustom lobsters-stories-per-page nil
+(defcustom lobsters-variables-stories-per-page nil
   "Number of stories to display per page. Set to nil to show all stories."
   :type '(choice (const :tag "Show all" nil)
                  (integer :tag "Stories per page"))
   :group 'lobsters)
 
-(defcustom lobsters-auto-refresh-interval nil
+(defcustom lobsters-variables-auto-refresh-interval nil
   "Automatic refresh interval in seconds. Set to nil to disable."
   :type '(choice (const :tag "Disabled" nil)
                  (integer :tag "Seconds"))
   :group 'lobsters)
 
-(defcustom lobsters-browser-function 'eww
+(defcustom lobsters-variables-browser-function 'eww
   "Function to use for browsing URLs."
   :type '(choice (const :tag "Use eww (internal browser)" eww)
                  (const :tag "Use system browser" browse-url-default-browser)
@@ -40,21 +50,21 @@
   :group 'lobsters)
 
 ;; API endpoints
-(defconst lobsters--hottest-endpoint "https://lobste.rs/hottest.json")
-(defconst lobsters--newest-endpoint "https://lobste.rs/newest.json")
+(defconst lobsters-variables--hottest-endpoint "https://lobste.rs/hottest.json")
+(defconst lobsters-variables--newest-endpoint "https://lobste.rs/newest.json")
 
 ;; Buffer names
-(defconst lobsters--hottest-buffer-name "*Lobsters - Hottest*")
-(defconst lobsters--newest-buffer-name "*Lobsters - Newest*")
+(defconst lobsters-variables--hottest-buffer-name "*Lobsters - Hottest*")
+(defconst lobsters-variables--newest-buffer-name "*Lobsters - Newest*")
 
 ;; Variables for state management
-(defvar lobsters--stories nil
+(defvar lobsters-variables--stories nil
   "List of currently loaded stories.")
 
-(defvar lobsters--current-feed-type nil
+(defvar lobsters-variables--current-feed-type nil
   "Current feed type being displayed ('hottest or 'newest).")
 
-(defvar lobsters--loading nil
+(defvar lobsters-variables--loading nil
   "Whether we're currently loading stories.")
 
 (provide 'lobsters-variables)

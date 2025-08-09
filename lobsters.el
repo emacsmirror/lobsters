@@ -1,4 +1,4 @@
-;;; lobsters.el --- A Lobsters client for Emacs -*- lexical-binding: t -*- -*- coding: utf-8 -*-
+;;; lobsters.el --- A Lobsters client -*- lexical-binding: t -*- -*- coding: utf-8 -*-
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -61,12 +61,12 @@
 (defun lobsters-hottest ()
   "View the hottest stories from Lobsters."
   (interactive)
-  (lobsters--fetch-stories-async lobsters--hottest-endpoint 'hottest))
+  (lobsters-feed--fetch-stories-async lobsters-variables--hottest-endpoint 'hottest))
 
 (defun lobsters-newest ()
   "View the newest stories from Lobsters."
   (interactive)
-  (lobsters--fetch-stories-async lobsters--newest-endpoint 'newest))
+  (lobsters-feed--fetch-stories-async lobsters-variables--newest-endpoint 'newest))
 
 (provide 'lobsters)
 ;;; lobsters.el ends here

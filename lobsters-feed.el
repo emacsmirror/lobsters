@@ -1,6 +1,11 @@
-;;; lobsters-feed.el --- A Lobsters client for Emacs -*- lexical-binding: t -*- -*- coding: utf-8 -*-
+;;; lobsters-feed.el --- A Lobsters client -*- lexical-binding: t -*- -*- coding: utf-8 -*-
 
-;; SPDX-License-Identifier: GPL-3.0
+;; SPDX-License-Identifier: GPL-3.0-or-later
+
+;; Author: Andros Fenollosa <hi@andros.dev>
+;; Version: 1.0
+;; URL: https://github.com/youruser/lobsters-el
+;; Package-Requires: ((emacs "25.1") (request "0.2.0") (visual-fill-column "2.4"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -14,6 +19,10 @@
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ;; General Public License for more details.
 
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see
+;; <http://www.gnu.org/licenses/>.
+
 ;;; Commentary:
 
 ;; Functions for fetching and processing Lobsters stories.
@@ -26,10 +35,10 @@
 (require 'seq)
 
 ;; Hooks
-(defvar lobsters-after-fetch-stories-hook nil
+(defvar lobsters-feed-after-fetch-stories-hook nil
   "Hook run after stories are successfully fetched.")
 
-(defun lobsters--fetch-stories-async (endpoint feed-type)
+(defun lobsters-feed--fetch-stories-async (endpoint feed-type)
   "Fetch stories from ENDPOINT and display them. FEED-TYPE should be 'hottest or 'newest."
   (setq lobsters--loading t)
   (setq lobsters--current-feed-type feed-type)
@@ -41,49 +50,49 @@
     :success (cl-function
               (lambda (&key data &allow-other-keys)
                 (setq lobsters--loading nil)
-                (setq lobsters--stories (lobsters--process-stories data))
+                (setq lobsters--stories (lobsters-feed--process-stories data))
                 (message "Lobsters stories loaded!")
-                (lobsters--display-stories feed-type)
-                (run-hooks 'lobsters-after-fetch-stories-hook)))
+                (lobsters-ui--display-stories feed-type)
+                (run-hooks 'lobsters-feed-after-fetch-stories-hook)))
     :error (cl-function
             (lambda (&key error-thrown &allow-other-keys)
               (setq lobsters--loading nil)
               (message "Error fetching Lobsters stories: %S" error-thrown)))))
 
-(defun lobsters--process-stories (raw-stories)
+(defun lobsters-feed--process-stories (raw-stories)
   "Process RAW-STORIES from the API into a more usable format."
   (mapcar (lambda (story)
             (list
              (cons 'short-id (cdr (assoc 'short_id story)))
-             (cons 'title (lobsters--clean-string (cdr (assoc 'title story))))
+             (cons 'title (lobsters-feed--clean-string (cdr (assoc 'title story))))
              (cons 'url (cdr (assoc 'url story)))
              (cons 'score (cdr (assoc 'score story)))
              (cons 'comment-count (cdr (assoc 'comment_count story)))
-             (cons 'submitter (lobsters--clean-string (cdr (assoc 'submitter_user story))))
+             (cons 'submitter (lobsters-feed--clean-string (cdr (assoc 'submitter_user story))))
              (cons 'tags (cdr (assoc 'tags story)))
              (cons 'created-at (cdr (assoc 'created_at story)))
              (cons 'comments-url (cdr (assoc 'comments_url story)))
              (cons 'short-id-url (cdr (assoc 'short_id_url story)))
-             (cons 'description (lobsters--clean-string (or (cdr (assoc 'description_plain story)) "")))))
+             (cons 'description (lobsters-feed--clean-string (or (cdr (assoc 'description_plain story)) "")))))
           raw-stories))
 
-(defun lobsters--clean-string (str)
+(defun lobsters-feed--clean-string (str)
   "Clean STR by removing carriage returns and other unwanted characters."
   (when str
     (replace-regexp-in-string "\r" "" (string-trim str))))
 
-(defun lobsters--get-all-stories ()
+(defun lobsters-feed--get-all-stories ()
   "Get all stories."
   lobsters--stories)
 
-(defun lobsters--refresh-current-feed ()
+(defun lobsters-feed--refresh-current-feed ()
   "Refresh the current feed."
   (interactive)
   (when lobsters--current-feed-type
     (let ((endpoint (if (eq lobsters--current-feed-type 'hottest)
-                        lobsters--hottest-endpoint
-                      lobsters--newest-endpoint)))
-      (lobsters--fetch-stories-async endpoint lobsters--current-feed-type))))
+                        lobsters-variables--hottest-endpoint
+                      lobsters-variables--newest-endpoint)))
+      (lobsters-feed--fetch-stories-async endpoint lobsters--current-feed-type))))
 
 (provide 'lobsters-feed)
 ;;; lobsters-feed.el ends here

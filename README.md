@@ -20,12 +20,12 @@ A simple and elegant [Lobsters](https://lobste.rs/) client for Emacs that allows
 
 1. Clone this repository or download the files:
 ```bash
-git clone https://github.com/tanrax/lobsters-el.git
+git clone https://github.com/tanrax/lobsters.el.git
 ```
 
 2. Add to your Emacs configuration:
 ```elisp
-(add-to-list 'load-path "/path/to/lobsters-el")
+(add-to-list 'load-path "/path/to/lobsters.el")
 (require 'lobsters)
 ```
 

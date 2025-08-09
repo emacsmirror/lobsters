@@ -57,9 +57,9 @@
 
 (defun lobsters-ui--insert-logo ()
   "Insert the Lobsters logo/header."
-  (lobsters-ui--insert-formatted-text "🦞 " 1.5 "#d2691e")
+  (lobsters-ui--insert-formatted-text "\n🦞 " 1.5 "#d2691e")
   (lobsters-ui--insert-formatted-text "Lobsters" 1.3 "#d2691e")
-  (lobsters-ui--insert-formatted-text " for Emacs\n\n"))
+  (lobsters-ui--insert-formatted-text "\n\n"))
 
 (defun lobsters-ui--string-separator ()
   "Return a string with the separator character."

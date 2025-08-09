@@ -1,6 +1,6 @@
 ;;; lobsters.el --- A Lobsters client for Emacs -*- lexical-binding: t -*- -*- coding: utf-8 -*-
 
-;; SPDX-License-Identifier: GPL-3.0
+;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;; Author: Andros Fenollosa <hi@andros.dev>
 ;; Version: 1.0

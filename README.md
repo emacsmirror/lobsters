@@ -18,6 +18,12 @@ A simple and elegant [Lobsters](https://lobste.rs/) client for Emacs that allows
 
 ## Installation
 
+### MELPA
+
+In progress
+
+### Manual
+
 1. Clone this repository or download the files:
 ```bash
 git clone https://github.com/tanrax/lobsters.el.git
@@ -29,7 +35,7 @@ git clone https://github.com/tanrax/lobsters.el.git
 (require 'lobsters)
 ```
 
-### Requirements
+#### Requirements
 
 - Emacs 25.1 or later
 - `request` package

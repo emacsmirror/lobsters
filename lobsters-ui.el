@@ -80,7 +80,7 @@
 (defun lobsters-ui--browse-url (url)
   "Browse URL using the configured browser function."
   (if url
-      (funcall lobsters-browser-function url)
+      (funcall lobsters-variables-browser-function url)
     (message "No URL available")))
 
 (defun lobsters-ui--format-relative-time (timestamp)
@@ -226,11 +226,11 @@
   "Toggle between eww and system browser."
   (interactive)
   (setq lobsters-browser-function
-        (if (eq lobsters-browser-function 'eww)
+        (if (eq lobsters-variables-browser-function 'eww)
             'browse-url-default-browser
           'eww))
   (message "Browser set to: %s"
-           (if (eq lobsters-browser-function 'eww)
+           (if (eq lobsters-variables-browser-function 'eww)
                "eww (internal)"
                "system browser")))
 

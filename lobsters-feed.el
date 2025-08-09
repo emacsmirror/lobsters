@@ -77,7 +77,7 @@
           raw-stories))
 
 (defun lobsters-feed--clean-string (str)
-  "Clean STR by removing carriage returns and other unwanted characters."
+  "Clean STR by removing carriage return and other unwanted characters."
   (when str
     (replace-regexp-in-string "\r" "" (string-trim str))))
 

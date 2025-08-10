@@ -24,7 +24,7 @@ In progress
 
 ### use-package
 
-You can install `lobsters.el` directly from the repository.
+You can install directly from the repository.
 
 Add the following to your Emacs config:
 
@@ -38,27 +38,22 @@ Add the following to your Emacs config:
 
 ### Manual
 
-1. Clone this repository or download the files:
+1. Install the `request` and `visual-fill-column` packages if you haven't already.
+
+```
+M-x package-install RET request RET
+M-x package-install RET visual-fill-column RET
+```
+
+2. Clone this repository or download the files:
 ```bash
 git clone https://github.com/tanrax/lobsters.el.git
 ```
 
-2. Add to your Emacs configuration:
+3. Add to your Emacs configuration:
 ```elisp
 (add-to-list 'load-path "/path/to/lobsters.el")
 (require 'lobsters)
-```
-
-#### Requirements
-
-- Emacs 25.1 or later
-- `request` package
-- `visual-fill-column` package (version 2.4+)
-
-Install the required packages via `package-install`:
-```
-M-x package-install RET request RET
-M-x package-install RET visual-fill-column RET
 ```
 
 ## Usage

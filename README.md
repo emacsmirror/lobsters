@@ -91,6 +91,13 @@ You can customize these variables:
 (setq lobsters-browser-function 'browse-url-default-browser)  ; Use system browser
 ```
 
+## Advanced Configuration
+
+```elisp
+(global-set-key (kbd "C-c b h") 'lobsters-hottest)
+(global-set-key (kbd "C-c b n") 'lobsters-newest)
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.

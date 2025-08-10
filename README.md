@@ -22,6 +22,20 @@ A simple and elegant [Lobsters](https://lobste.rs/) client for Emacs that allows
 
 In progress
 
+### use-package
+
+You can install `lobsters.el` directly from the repository.
+
+Add the following to your Emacs config:
+
+```elisp
+(use-package request)
+(use-package visual-fill-column)
+(use-package lobsters
+  :vc ( :url "https://github.com/tanrax/lobsters.el"
+        :rev :newest))
+```
+
 ### Manual
 
 1. Clone this repository or download the files:

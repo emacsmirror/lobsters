@@ -4,7 +4,7 @@
 
 ;; Author: Andros Fenollosa <hi@andros.dev>
 ;; Version: 1.0
-;; URL: https://github.com/youruser/lobsters-el
+;; URL: https://github.com/tanrax/lobsters.el
 ;; Package-Requires: ((emacs "25.1") (request "0.2.0") (visual-fill-column "2.4"))
 
 ;; This file is NOT part of GNU Emacs.

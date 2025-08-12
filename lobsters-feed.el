@@ -39,9 +39,10 @@
   "Hook run after stories are successfully fetched.")
 
 (defun lobsters-feed--fetch-stories-async (endpoint feed-type)
-  "Fetch stories from ENDPOINT and display them. FEED-TYPE should be 'hottest or 'newest."
-  (setq lobsters--loading t)
-  (setq lobsters--current-feed-type feed-type)
+  "Fetch stories from ENDPOINT and display them.
+FEED-TYPE should be `hottest or `newest."
+  (setq lobsters-variables--loading t)
+  (setq lobsters-variables--current-feed-type feed-type)
   (message "Fetching Lobsters stories...")
 
   (request endpoint
@@ -49,14 +50,14 @@
     :parser 'json-read
     :success (cl-function
               (lambda (&key data &allow-other-keys)
-                (setq lobsters--loading nil)
-                (setq lobsters--stories (lobsters-feed--process-stories data))
+                (setq lobsters-variables--loading nil)
+                (setq lobsters-variables--stories (lobsters-feed--process-stories data))
                 (message "Lobsters stories loaded!")
                 (lobsters-ui--display-stories feed-type)
                 (run-hooks 'lobsters-feed-after-fetch-stories-hook)))
     :error (cl-function
             (lambda (&key error-thrown &allow-other-keys)
-              (setq lobsters--loading nil)
+              (setq lobsters-variables--loading nil)
               (message "Error fetching Lobsters stories: %S" error-thrown)))))
 
 (defun lobsters-feed--process-stories (raw-stories)
@@ -83,16 +84,16 @@
 
 (defun lobsters-feed--get-all-stories ()
   "Get all stories."
-  lobsters--stories)
+  lobsters-variables--stories)
 
 (defun lobsters-feed--refresh-current-feed ()
   "Refresh the current feed."
   (interactive)
-  (when lobsters--current-feed-type
-    (let ((endpoint (if (eq lobsters--current-feed-type 'hottest)
+  (when lobsters-variables--current-feed-type
+    (let ((endpoint (if (eq lobsters-variables--current-feed-type 'hottest)
                         lobsters-variables--hottest-endpoint
                       lobsters-variables--newest-endpoint)))
-      (lobsters-feed--fetch-stories-async endpoint lobsters--current-feed-type))))
+      (lobsters-feed--fetch-stories-async endpoint lobsters-variables--current-feed-type))))
 
 (provide 'lobsters-feed)
 ;;; lobsters-feed.el ends here

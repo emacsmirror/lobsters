@@ -109,7 +109,7 @@
 
     ;; Title (make it a clickable link)
     (widget-create 'push-button
-                   :notify (lambda (&rest ignore)
+                   :notify (lambda (&rest _)
                              (lobsters-ui--browse-url url))
                    :help-echo (if url (format "Open: %s" url) "No URL")
                    :format "%[%v%]"
@@ -142,7 +142,7 @@
     ;; Comments link
     (lobsters-ui--insert-formatted-text "\n  ")
     (widget-create 'push-button
-                   :notify (lambda (&rest ignore)
+                   :notify (lambda (&rest _)
                              (lobsters-ui--browse-url comments-url))
                    :help-echo (format "View comments: %s" comments-url)
                    " 💬 Comments ")
@@ -151,7 +151,7 @@
     (when url
       (lobsters-ui--insert-formatted-text " ")
       (widget-create 'push-button
-                     :notify (lambda (&rest ignore)
+                     :notify (lambda (&rest _)
                                (lobsters-ui--browse-url url))
                      :help-echo (format "Open link: %s" url)
                      " 🔗 Link "))
@@ -165,7 +165,7 @@
 
   ;; Navigation buttons
   (widget-create 'push-button
-                 :notify (lambda (&rest ignore)
+                 :notify (lambda (&rest _)
                            (lobsters-feed--fetch-stories-async lobsters-variables--hottest-endpoint 'hottest))
                  :help-echo "View hottest stories"
                  " 🔥 Hottest ")
@@ -173,7 +173,7 @@
   (lobsters-ui--insert-formatted-text " ")
 
   (widget-create 'push-button
-                 :notify (lambda (&rest ignore)
+                 :notify (lambda (&rest _)
                            (lobsters-feed--fetch-stories-async lobsters-variables--newest-endpoint 'newest))
                  :help-echo "View newest stories"
                  " 🆕 Newest ")
@@ -181,7 +181,7 @@
   (lobsters-ui--insert-formatted-text " ")
 
   (widget-create 'push-button
-                 :notify (lambda (&rest ignore)
+                 :notify (lambda (&rest _)
                            (lobsters-feed--refresh-current-feed))
                  :help-echo "Refresh current feed"
                  " ↻ Refresh ")
@@ -224,7 +224,7 @@
 (defun lobsters-ui--toggle-browser ()
   "Toggle between eww and system browser."
   (interactive)
-  (setq lobsters-browser-function
+  (setq lobsters-variables-browser-function
         (if (eq lobsters-variables-browser-function 'eww)
             'browse-url-default-browser
           'eww))
@@ -236,7 +236,7 @@
 (defun lobsters-ui--quit ()
   "Quit the Lobsters buffer."
   (interactive)
-  (let ((buffer-name (if (eq lobsters--current-feed-type 'hottest)
+  (let ((buffer-name (if (eq lobsters-variables--current-feed-type 'hottest)
                          lobsters-variables--hottest-buffer-name
                        lobsters-variables--newest-buffer-name)))
     (when (get-buffer buffer-name)

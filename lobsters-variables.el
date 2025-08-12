@@ -62,7 +62,7 @@
   "List of currently loaded stories.")
 
 (defvar lobsters-variables--current-feed-type nil
-  "Current feed type being displayed ('hottest or 'newest).")
+  "Current feed type being displayed (`hottest or `newest).")
 
 (defvar lobsters-variables--loading nil
   "Whether we're currently loading stories.")

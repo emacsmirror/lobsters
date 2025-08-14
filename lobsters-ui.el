@@ -39,247 +39,238 @@
 (defconst lobsters-ui--char-separator ?-)
 
 (defun lobsters-ui--insert-formatted-text (text &optional size font-color background-color)
-  "Insert TEXT with optional formatting SIZE, FONT-COLOR, and BACKGROUND-COLOR."
-  (let ((start (point)))
-    (insert text)
-    (let ((end (point))
-          (props (list)))
-      (when size
-        (push `(:height ,size) props))
-      (when font-color
-        (push `(:foreground ,font-color) props))
-      (when background-color
-        (push `(:background ,background-color) props))
-      (when props
-        (put-text-property start end 'face (apply #'append props))))))
+	"Insert TEXT with optional formatting SIZE, FONT-COLOR, and BACKGROUND-COLOR."
+	(let ((start (point)))
+		(insert text)
+		(let ((end (point))
+		      (props (list)))
+			(when size
+				(push `(:height ,size) props))
+			(when font-color
+				(push `(:foreground ,font-color) props))
+			(when background-color
+				(push `(:background ,background-color) props))
+			(when props
+				(put-text-property start end 'face (apply #'append props))))))
 
 (defun lobsters-ui--insert-logo ()
-  "Insert the Lobsters logo/header."
-  (lobsters-ui--insert-formatted-text "\n🦞 " 1.5 "#d2691e")
-  (lobsters-ui--insert-formatted-text "Lobsters" 1.3 "#d2691e")
-  (lobsters-ui--insert-formatted-text "\n\n"))
+	"Insert the Lobsters logo/header."
+	(lobsters-ui--insert-formatted-text "\n🦞 " 1.5 "#d2691e")
+	(lobsters-ui--insert-formatted-text "Lobsters" 1.3 "#d2691e")
+	(lobsters-ui--insert-formatted-text "\n\n"))
 
 (defun lobsters-ui--string-separator ()
-  "Return a string with the separator character."
-  (make-string lobsters--max-width lobsters-ui--char-separator))
+	"Return a string with the separator character."
+	(make-string lobsters--max-width lobsters-ui--char-separator))
 
 (defun lobsters-ui--insert-separator ()
-  "Insert a horizontal separator line."
-  (lobsters-ui--insert-formatted-text "\n")
-  (lobsters-ui--insert-formatted-text (lobsters-ui--string-separator) nil "#666666")
-  (lobsters-ui--insert-formatted-text "\n"))
+	"Insert a horizontal separator line."
+	(lobsters-ui--insert-formatted-text "\n")
+	(lobsters-ui--insert-formatted-text (lobsters-ui--string-separator) nil "#666666")
+	(lobsters-ui--insert-formatted-text "\n"))
 
 (defun lobsters-ui--format-tags (tags)
-  "Format TAGS list for display."
-  (if tags
-      (concat "[" (mapconcat 'identity tags ", ") "]")
-    ""))
+	"Format TAGS list for display."
+	(if tags
+	    (concat "[" (mapconcat 'identity tags ", ") "]")
+		""))
 
 (defun lobsters-ui--browse-url (url)
-  "Browse URL using the configured browser function."
-  (if url
-      (funcall lobsters-variables-browser-function url)
-    (message "No URL available")))
+	"Browse URL using the configured browser function."
+	(if url
+	    (funcall lobsters-variables-browser-function url)
+		(message "No URL available")))
 
 (defun lobsters-ui--format-relative-time (timestamp)
-  "Format TIMESTAMP as relative time."
-  (let* ((time (date-to-time timestamp))
-         (diff (float-time (time-subtract (current-time) time)))
-         (days (floor (/ diff 86400)))
-         (hours (floor (/ (mod diff 86400) 3600)))
-         (minutes (floor (/ (mod diff 3600) 60))))
-    (cond
-     ((> days 0) (format "%d day%s ago" days (if (= days 1) "" "s")))
-     ((> hours 0) (format "%d hour%s ago" hours (if (= hours 1) "" "s")))
-     ((> minutes 0) (format "%d minute%s ago" minutes (if (= minutes 1) "" "s")))
-     (t "just now"))))
+	"Format TIMESTAMP as relative time."
+	(let* ((time (date-to-time timestamp))
+	       (diff (float-time (time-subtract (current-time) time)))
+	       (days (floor (/ diff 86400)))
+	       (hours (floor (/ (mod diff 86400) 3600)))
+	       (minutes (floor (/ (mod diff 3600) 60))))
+		(cond
+		 ((> days 0) (format "%d day%s ago" days (if (= days 1) "" "s")))
+		 ((> hours 0) (format "%d hour%s ago" hours (if (= hours 1) "" "s")))
+		 ((> minutes 0) (format "%d minute%s ago" minutes (if (= minutes 1) "" "s")))
+		 (t "just now"))))
 
 (defun lobsters-ui--story-component (story)
-  "Insert a story component for STORY."
-  (let* ((title (cdr (assoc 'title story)))
-         (url (cdr (assoc 'url story)))
-         (score (cdr (assoc 'score story)))
-         (comment-count (cdr (assoc 'comment-count story)))
-         (submitter (cdr (assoc 'submitter story)))
-         (tags (cdr (assoc 'tags story)))
-         (created-at (cdr (assoc 'created-at story)))
-         (comments-url (cdr (assoc 'comments-url story)))
-         (description (cdr (assoc 'description story))))
+	"Insert a story component for STORY."
+	(let-alist story
+		;; Title (make it a clickable link)
+		(widget-create 'push-button
+		               :notify (lambda (&rest _)
+			                       (lobsters-ui--browse-url .url))
+		               :help-echo (if .url (format "Open: %s" .url) "No URL")
+		               :format "%[%v%]"
+		               .title)
 
-    ;; Title (make it a clickable link)
-    (widget-create 'push-button
-                   :notify (lambda (&rest _)
-                             (lobsters-ui--browse-url url))
-                   :help-echo (if url (format "Open: %s" url) "No URL")
-                   :format "%[%v%]"
-                   title)
+		(lobsters-ui--insert-formatted-text "\n")
 
-    (lobsters-ui--insert-formatted-text "\n")
+		;; Score and comments info
+		(lobsters-ui--insert-formatted-text "  ")
+		(lobsters-ui--insert-formatted-text (format "↑%d" .score) nil "#ff6600")
+		(lobsters-ui--insert-formatted-text " | ")
+		(lobsters-ui--insert-formatted-text (format "%d comment%s"
+		                                             .comment-count
+		                                             (if (= .comment-count 1) "" "s")) nil "#666666")
+		(lobsters-ui--insert-formatted-text " | by ")
+		(lobsters-ui--insert-formatted-text .submitter nil "#0066cc")
+		(lobsters-ui--insert-formatted-text " | ")
+		(lobsters-ui--insert-formatted-text (lobsters-ui--format-relative-time .created-at) nil "#666666")
 
-    ;; Score and comments info
-    (lobsters-ui--insert-formatted-text "  ")
-    (lobsters-ui--insert-formatted-text (format "↑%d" score) nil "#ff6600")
-    (lobsters-ui--insert-formatted-text " | ")
-    (lobsters-ui--insert-formatted-text (format "%d comment%s"
-                                             comment-count
-                                             (if (= comment-count 1) "" "s")) nil "#666666")
-    (lobsters-ui--insert-formatted-text " | by ")
-    (lobsters-ui--insert-formatted-text submitter nil "#0066cc")
-    (lobsters-ui--insert-formatted-text " | ")
-    (lobsters-ui--insert-formatted-text (lobsters-ui--format-relative-time created-at) nil "#666666")
+		;; Tags
+		(when .tags
+			(lobsters-ui--insert-formatted-text "\n  ")
+			(lobsters-ui--insert-formatted-text (lobsters-ui--format-tags .tags) nil "#008000"))
 
-    ;; Tags
-    (when tags
-      (lobsters-ui--insert-formatted-text "\n  ")
-      (lobsters-ui--insert-formatted-text (lobsters-ui--format-tags tags) nil "#008000"))
+		;; Description (if available)
+		(when (and .description (not (string-empty-p .description)))
+			(lobsters-ui--insert-formatted-text "\n  ")
+			(lobsters-ui--insert-formatted-text .description nil "#333333"))
 
-    ;; Description (if available)
-    (when (and description (not (string-empty-p description)))
-      (lobsters-ui--insert-formatted-text "\n  ")
-      (lobsters-ui--insert-formatted-text description nil "#333333"))
+		;; Comments link
+		(lobsters-ui--insert-formatted-text "\n  ")
+		(widget-create 'push-button
+		               :notify (lambda (&rest _)
+			                       (lobsters-ui--browse-url .comments-url))
+		               :help-echo (format "View comments: %s" .comments-url)
+		               " 💬 Comments ")
 
-    ;; Comments link
-    (lobsters-ui--insert-formatted-text "\n  ")
-    (widget-create 'push-button
-                   :notify (lambda (&rest _)
-                             (lobsters-ui--browse-url comments-url))
-                   :help-echo (format "View comments: %s" comments-url)
-                   " 💬 Comments ")
+		;; URL link (if different from comments)
+		(when .url
+			(lobsters-ui--insert-formatted-text " ")
+			(widget-create 'push-button
+			               :notify (lambda (&rest _)
+				                       (lobsters-ui--browse-url .url))
+			               :help-echo (format "Open link: %s" .url)
+			               " 🔗 Link "))
 
-    ;; URL link (if different from comments)
-    (when url
-      (lobsters-ui--insert-formatted-text " ")
-      (widget-create 'push-button
-                     :notify (lambda (&rest _)
-                               (lobsters-ui--browse-url url))
-                     :help-echo (format "Open link: %s" url)
-                     " 🔗 Link "))
-
-    (lobsters-ui--insert-formatted-text "\n")
-    (lobsters-ui--insert-separator)))
+		(lobsters-ui--insert-formatted-text "\n")
+		(lobsters-ui--insert-separator)))
 
 (defun lobsters-ui--insert-header (feed-type)
-  "Insert the header for FEED-TYPE."
-  (lobsters-ui--insert-logo)
+	"Insert the header for FEED-TYPE."
+	(lobsters-ui--insert-logo)
 
-  ;; Navigation buttons
-  (widget-create 'push-button
-                 :notify (lambda (&rest _)
-                           (lobsters-feed--fetch-stories-async lobsters-variables--hottest-endpoint 'hottest))
-                 :help-echo "View hottest stories"
-                 " 🔥 Hottest ")
+	;; Navigation buttons
+	(widget-create 'push-button
+	               :notify (lambda (&rest _)
+		                       (lobsters-feed--fetch-stories-async lobsters-variables--hottest-endpoint 'hottest))
+	               :help-echo "View hottest stories"
+	               " 🔥 Hottest ")
 
-  (lobsters-ui--insert-formatted-text " ")
+	(lobsters-ui--insert-formatted-text " ")
 
-  (widget-create 'push-button
-                 :notify (lambda (&rest _)
-                           (lobsters-feed--fetch-stories-async lobsters-variables--newest-endpoint 'newest))
-                 :help-echo "View newest stories"
-                 " 🆕 Newest ")
+	(widget-create 'push-button
+	               :notify (lambda (&rest _)
+		                       (lobsters-feed--fetch-stories-async lobsters-variables--newest-endpoint 'newest))
+	               :help-echo "View newest stories"
+	               " 🆕 Newest ")
 
-  (lobsters-ui--insert-formatted-text " ")
+	(lobsters-ui--insert-formatted-text " ")
 
-  (widget-create 'push-button
-                 :notify (lambda (&rest _)
-                           (lobsters-feed--refresh-current-feed))
-                 :help-echo "Refresh current feed"
-                 " ↻ Refresh ")
+	(widget-create 'push-button
+	               :notify (lambda (&rest _)
+		                       (lobsters-feed--refresh-current-feed))
+	               :help-echo "Refresh current feed"
+	               " ↻ Refresh ")
 
-  ;; Current feed indicator
-  (lobsters-ui--insert-formatted-text (format "\n\nShowing: %s stories\n"
-                                           (if (eq feed-type 'hottest) "Hottest" "Newest"))
-                                   nil "#d2691e")
+	;; Current feed indicator
+	(lobsters-ui--insert-formatted-text (format "\n\nShowing: %s stories\n"
+	                                             (if (eq feed-type 'hottest) "Hottest" "Newest"))
+	                                     nil "#d2691e")
 
-  ;; Keyboard shortcuts help
-  (lobsters-ui--insert-formatted-text "Keyboard: (n) Next story | (p) Previous story | (r) Refresh | (q) Quit | (b) Browser toggle\n")
+	;; Keyboard shortcuts help
+	(lobsters-ui--insert-formatted-text "Keyboard: (n) Next story | (p) Previous story | (r) Refresh | (q) Quit | (b) Browser toggle\n")
 
-  (lobsters-ui--insert-separator))
+	(lobsters-ui--insert-separator))
 
 (defun lobsters-ui--insert-stories ()
-  "Insert all stories."
-  (let ((stories (lobsters-feed--get-all-stories)))
-    (if stories
-        (dolist (story stories)
-          (lobsters-ui--story-component story))
-      (lobsters-ui--insert-formatted-text "No stories available.\n" nil "#ff0000"))))
+	"Insert all stories."
+	(let ((stories (lobsters-feed--get-all-stories)))
+		(if stories
+		    (dolist (story stories)
+			    (lobsters-ui--story-component story))
+			(lobsters-ui--insert-formatted-text "No stories available.\n" nil "#ff0000"))))
 
 (defun lobsters-ui--goto-next-story ()
-  "Go to the next story."
-  (interactive)
-  (let ((separator-regex (concat "^" (regexp-quote (lobsters-ui--string-separator)) "$")))
-    (if (search-forward-regexp separator-regex nil t)
-        (forward-line 1)
-      (message "No more stories"))))
+	"Go to the next story."
+	(interactive)
+	(let ((separator-regex (concat "^" (regexp-quote (lobsters-ui--string-separator)) "$")))
+		(if (search-forward-regexp separator-regex nil t)
+		    (forward-line 1)
+			(message "No more stories"))))
 
 (defun lobsters-ui--goto-previous-story ()
-  "Go to the previous story."
-  (interactive)
-  (let ((separator-regex (concat "^" (regexp-quote (lobsters-ui--string-separator)) "$")))
-    (search-backward-regexp separator-regex nil t)
-    (unless (search-backward-regexp separator-regex nil t)
-      (goto-char (point-min)))
-    (forward-line 1)))
+	"Go to the previous story."
+	(interactive)
+	(let ((separator-regex (concat "^" (regexp-quote (lobsters-ui--string-separator)) "$")))
+		(search-backward-regexp separator-regex nil t)
+		(unless (search-backward-regexp separator-regex nil t)
+			(goto-char (point-min)))
+		(forward-line 1)))
 
 (defun lobsters-ui--toggle-browser ()
-  "Toggle between eww and system browser."
-  (interactive)
-  (setq lobsters-variables-browser-function
-        (if (eq lobsters-variables-browser-function 'eww)
-            'browse-url-default-browser
-          'eww))
-  (message "Browser set to: %s"
-           (if (eq lobsters-variables-browser-function 'eww)
-               "eww (internal)"
-               "system browser")))
+	"Toggle between eww and system browser."
+	(interactive)
+	(setq lobsters-variables-browser-function
+	      (if (eq lobsters-variables-browser-function 'eww)
+	          'browse-url-default-browser
+	        'eww))
+	(message "Browser set to: %s"
+	         (if (eq lobsters-variables-browser-function 'eww)
+	             "eww (internal)"
+	           "system browser")))
 
 (defun lobsters-ui--quit ()
-  "Quit the Lobsters buffer."
-  (interactive)
-  (let ((buffer-name (if (eq lobsters-variables--current-feed-type 'hottest)
-                         lobsters-variables--hottest-buffer-name
-                       lobsters-variables--newest-buffer-name)))
-    (when (get-buffer buffer-name)
-      (kill-buffer buffer-name))))
+	"Quit the Lobsters buffer."
+	(interactive)
+	(let ((buffer-name (if (eq lobsters-variables--current-feed-type 'hottest)
+	                       lobsters-variables--hottest-buffer-name
+	                     lobsters-variables--newest-buffer-name)))
+		(when (get-buffer buffer-name)
+			(kill-buffer buffer-name))))
 
 (defun lobsters-ui--display-stories (feed-type)
-  "Display stories for FEED-TYPE."
-  (let ((buffer-name (if (eq feed-type 'hottest)
-                         lobsters-variables--hottest-buffer-name
-                       lobsters-variables--newest-buffer-name)))
-    (switch-to-buffer buffer-name)
-    (kill-all-local-variables)
+	"Display stories for FEED-TYPE."
+	(let ((buffer-name (if (eq feed-type 'hottest)
+	                       lobsters-variables--hottest-buffer-name
+	                     lobsters-variables--newest-buffer-name)))
+		(switch-to-buffer buffer-name)
+		(kill-all-local-variables)
 
-    ;; Disable read-only mode BEFORE trying to modify the buffer
-    (read-only-mode -1)
+		;; Disable read-only mode BEFORE trying to modify the buffer
+		(read-only-mode -1)
 
-    (let ((inhibit-read-only t))
-      (erase-buffer))
-    (remove-overlays)
+		(let ((inhibit-read-only t))
+			(erase-buffer))
+		(remove-overlays)
 
-    ;; Insert content
-    (lobsters-ui--insert-header feed-type)
-    (lobsters-ui--insert-stories)
+		;; Insert content
+		(lobsters-ui--insert-header feed-type)
+		(lobsters-ui--insert-stories)
 
-    ;; Set up the buffer
-    (use-local-map widget-keymap)
-    (display-line-numbers-mode 0)
+		;; Set up the buffer
+		(use-local-map widget-keymap)
+		(display-line-numbers-mode 0)
 
-    ;; Keyboard shortcuts
-    (local-set-key (kbd "n") 'lobsters-ui--goto-next-story)
-    (local-set-key (kbd "p") 'lobsters-ui--goto-previous-story)
-    (local-set-key (kbd "r") 'lobsters-feed--refresh-current-feed)
-    (local-set-key (kbd "q") 'lobsters-ui--quit)
-    (local-set-key (kbd "g") 'lobsters-feed--refresh-current-feed)
-    (local-set-key (kbd "b") 'lobsters-ui--toggle-browser)
+		;; Keyboard shortcuts
+		(local-set-key (kbd "n") 'lobsters-ui--goto-next-story)
+		(local-set-key (kbd "p") 'lobsters-ui--goto-previous-story)
+		(local-set-key (kbd "r") 'lobsters-feed--refresh-current-feed)
+		(local-set-key (kbd "q") 'lobsters-ui--quit)
+		(local-set-key (kbd "g") 'lobsters-feed--refresh-current-feed)
+		(local-set-key (kbd "b") 'lobsters-ui--toggle-browser)
 
-    ;; Enable minor mode and finish setup
-    (lobsters-mode 1)
-    (widget-setup)
-    (goto-char (point-min))
-    (widget-forward 1)
+		;; Enable minor mode and finish setup
+		(lobsters-mode 1)
+		(widget-setup)
+		(goto-char (point-min))
+		(widget-forward 1)
 
-    ;; Enable read-only mode AFTER all modifications are done
-    (read-only-mode 1)))
+		;; Enable read-only mode AFTER all modifications are done
+		(read-only-mode 1)))
 
 (provide 'lobsters-ui)
 ;;; lobsters-ui.el ends here

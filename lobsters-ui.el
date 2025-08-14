@@ -245,13 +245,13 @@
 	           "system browser")))
 
 (defun lobsters-ui--quit ()
-	"Quit the Lobsters buffer."
+	"Quit all Lobsters buffers."
 	(interactive)
-	(let ((buffer-name (if (eq lobsters-variables--current-feed-type 'hottest)
-	                       lobsters-variables--hottest-buffer-name
-	                     lobsters-variables--newest-buffer-name)))
-		(when (get-buffer buffer-name)
-			(kill-buffer buffer-name))))
+	;; Kill both hottest and newest buffers if they exist
+	(when (get-buffer lobsters-variables--hottest-buffer-name)
+		(kill-buffer lobsters-variables--hottest-buffer-name))
+	(when (get-buffer lobsters-variables--newest-buffer-name)
+		(kill-buffer lobsters-variables--newest-buffer-name)))
 
 (defun lobsters-ui--display-stories (feed-type)
 	"Display stories for FEED-TYPE."

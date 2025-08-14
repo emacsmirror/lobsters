@@ -46,16 +46,11 @@
   "A Lobsters client for Emacs."
   :group 'lobsters)
 
-(define-minor-mode lobsters-mode
-  "Minor mode for enhancing the lobsters experience."
-  :lighter " lobsters"
-  :global nil
-  (if lobsters-mode
-      (progn
-	(setq visual-fill-column-center-text t)
-	(setq visual-fill-column-width lobsters--max-width)
-	(visual-fill-column-mode 1))
-    (visual-fill-column-mode -1)))
+(define-derived-mode lobsters-view-mode special-mode "Lobsters"
+  "Major mode for viewing lobsters stories."
+  (setq visual-fill-column-center-text t)
+  (setq visual-fill-column-width lobsters--max-width)
+  (visual-fill-column-mode 1))
 
 (defun lobsters-hottest ()
   "View the hottest stories from Lobsters."

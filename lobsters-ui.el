@@ -35,6 +35,13 @@
 (require 'eww)
 (require 'cl-lib)
 
+;; Define the lobsters-mode
+(define-derived-mode lobsters-mode special-mode "Lobsters"
+	"Major mode for viewing lobsters stories."
+	(setq visual-fill-column-center-text t)
+	(setq visual-fill-column-width 80)
+	(visual-fill-column-mode 1))
+
 ;; UI Variables
 (defconst lobsters-ui--char-separator ?-)
 
@@ -263,8 +270,8 @@
 		(local-set-key (kbd "g") 'lobsters-feed--refresh-current-feed)
 		(local-set-key (kbd "b") 'lobsters-ui--toggle-browser)
 
-		;; Enable minor mode and finish setup
-		(lobsters-mode 1)
+		;; Enable major mode and finish setup
+		(lobsters-mode)
 		(widget-setup)
 		(goto-char (point-min))
 		(widget-forward 1)

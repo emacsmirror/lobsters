@@ -35,12 +35,26 @@
 (require 'eww)
 (require 'cl-lib)
 
+;; Define keymap for lobsters-mode
+(defvar lobsters-mode-map
+	(let ((map (make-sparse-keymap)))
+		(set-keymap-parent map widget-keymap)
+		(define-key map (kbd "n") 'lobsters-ui--goto-next-story)
+		(define-key map (kbd "p") 'lobsters-ui--goto-previous-story)
+		(define-key map (kbd "r") 'lobsters-feed--refresh-current-feed)
+		(define-key map (kbd "q") 'lobsters-ui--quit)
+		(define-key map (kbd "g") 'lobsters-feed--refresh-current-feed)
+		(define-key map (kbd "b") 'lobsters-ui--toggle-browser)
+		map)
+	"Keymap for `lobsters-mode'.")
+
 ;; Define the lobsters-mode
 (define-derived-mode lobsters-mode special-mode "Lobsters"
 	"Major mode for viewing lobsters stories."
 	(setq visual-fill-column-center-text t)
 	(setq visual-fill-column-width 80)
-	(visual-fill-column-mode 1))
+	(visual-fill-column-mode 1)
+	(use-local-map lobsters-mode-map))
 
 ;; UI Variables
 (defconst lobsters-ui--char-separator ?-)
@@ -258,21 +272,10 @@
 		(lobsters-ui--insert-header feed-type)
 		(lobsters-ui--insert-stories)
 
-		;; Set up the buffer
-		(use-local-map widget-keymap)
-		(display-line-numbers-mode 0)
-
-		;; Keyboard shortcuts
-		(local-set-key (kbd "n") 'lobsters-ui--goto-next-story)
-		(local-set-key (kbd "p") 'lobsters-ui--goto-previous-story)
-		(local-set-key (kbd "r") 'lobsters-feed--refresh-current-feed)
-		(local-set-key (kbd "q") 'lobsters-ui--quit)
-		(local-set-key (kbd "g") 'lobsters-feed--refresh-current-feed)
-		(local-set-key (kbd "b") 'lobsters-ui--toggle-browser)
-
-		;; Enable major mode and finish setup
+		;; Set up the buffer with lobsters-mode
 		(lobsters-mode)
 		(widget-setup)
+		(display-line-numbers-mode 0)
 		(goto-char (point-min))
 		(widget-forward 1)
 

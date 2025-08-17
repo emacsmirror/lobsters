@@ -42,7 +42,6 @@
 (require 'visual-fill-column)
 (require 'cl-lib)
 
-(defconst lobsters--max-width 80)
 (defgroup lobsters nil
   "A Lobsters client for Emacs."
   :group 'lobsters)

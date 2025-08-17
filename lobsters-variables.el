@@ -52,6 +52,8 @@
                  (function :tag "Custom browser function"))
   :group 'lobsters)
 
+(defconst lobsters--max-width 80)
+
 ;; API endpoints
 (defconst lobsters-variables--hottest-endpoint "https://lobste.rs/hottest.json")
 (defconst lobsters-variables--newest-endpoint "https://lobste.rs/newest.json")

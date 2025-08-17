@@ -34,19 +34,20 @@
 (require 'wid-edit)
 (require 'eww)
 (require 'cl-lib)
+(require 'visual-fill-column)
 
 ;; Define keymap for lobsters-mode
 (defvar lobsters-mode-map
-	(let ((map (make-sparse-keymap)))
-		(set-keymap-parent map widget-keymap)
-		(define-key map (kbd "n") 'lobsters-ui--goto-next-story)
-		(define-key map (kbd "p") 'lobsters-ui--goto-previous-story)
-		(define-key map (kbd "r") 'lobsters-feed--refresh-current-feed)
-		(define-key map (kbd "q") 'lobsters-ui--quit)
-		(define-key map (kbd "g") 'lobsters-feed--refresh-current-feed)
-		(define-key map (kbd "b") 'lobsters-ui--toggle-browser)
-		map)
-	"Keymap for `lobsters-mode'.")
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map widget-keymap)
+    (define-key map (kbd "n") 'lobsters-ui--goto-next-story)
+    (define-key map (kbd "p") 'lobsters-ui--goto-previous-story)
+    (define-key map (kbd "r") 'lobsters-feed--refresh-current-feed)
+    (define-key map (kbd "q") 'lobsters-ui--quit)
+    (define-key map (kbd "g") 'lobsters-feed--refresh-current-feed)
+    (define-key map (kbd "b") 'lobsters-ui--toggle-browser)
+    map)
+  "Keymap for `lobsters-mode'.")
 
 ;; Define the lobsters-mode
 (define-derived-mode lobsters-mode special-mode "Lobsters"
@@ -93,7 +94,7 @@
 (defun lobsters-ui--format-tags (tags)
 	"Format TAGS list for display."
 	(if tags
-	    (concat "[" (mapconcat 'identity tags ", ") "]")
+	    (concat "[" (mapconcat #'identity tags ", ") "]")
 		""))
 
 (defun lobsters-ui--browse-url (url)

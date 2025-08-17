@@ -39,6 +39,7 @@
 (require 'lobsters-variables)
 (require 'lobsters-feed)
 (require 'lobsters-ui)
+(require 'visual-fill-column)
 (require 'cl-lib)
 
 (defconst lobsters--max-width 80)

@@ -20,7 +20,9 @@ A simple and elegant [Lobsters](https://lobste.rs/) client for Emacs that allows
 
 ### MELPA
 
-In progress
+```
+M-x package-install RET lobsters RET
+```
 
 ### use-package
 

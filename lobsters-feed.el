@@ -29,6 +29,7 @@
 ;;; Code:
 
 (require 'lobsters-variables)
+(require 'lobsters-ui)
 (require 'request)
 (require 'json)
 (require 'seq)

@@ -50,8 +50,8 @@
   (unless (featurep 'lobsters-variables)
     (add-to-list 'load-path lobsters--root-dir)
     (require 'lobsters-variables)
-    (require 'lobsters-feed)
     (require 'lobsters-ui)
+    (require 'lobsters-feed)
     (require 'visual-fill-column)
     (require 'cl-lib)))
 

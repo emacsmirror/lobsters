@@ -29,10 +29,12 @@
 ;;; Code:
 
 (require 'lobsters-variables)
-(require 'lobsters-ui)
 (require 'request)
 (require 'json)
 (require 'seq)
+
+;; Forward declarations to avoid circular dependencies
+(declare-function lobsters-ui--display-stories "lobsters-ui" (feed-type))
 
 ;; Hooks
 (defvar lobsters-feed-after-fetch-stories-hook nil

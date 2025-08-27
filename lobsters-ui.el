@@ -29,12 +29,16 @@
 ;;; Code:
 
 (require 'lobsters-variables)
-(require 'lobsters-feed)
 (require 'widget)
 (require 'wid-edit)
 (require 'eww)
 (require 'cl-lib)
 (require 'visual-fill-column)
+
+;; Forward declarations to avoid circular dependencies
+(declare-function lobsters-feed--get-all-stories "lobsters-feed" ())
+(declare-function lobsters-feed--fetch-stories-async "lobsters-feed" (endpoint feed-type))
+(declare-function lobsters-feed--refresh-current-feed "lobsters-feed" ())
 
 ;; Define keymap for lobsters-mode
 (defvar lobsters-mode-map

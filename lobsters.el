@@ -35,9 +35,14 @@
 
 (defconst lobsters--root-dir (file-name-directory (or load-file-name buffer-file-name)))
 
+(require 'visual-fill-column)
+
 (defgroup lobsters nil
   "A Lobsters client for Emacs."
   :group 'lobsters)
+
+;; Forward declarations to avoid compiler warnings
+(declare-function lobsters-feed--fetch-stories-async "lobsters-feed" (endpoint feed-type))
 
 (define-derived-mode lobsters-view-mode special-mode "Lobsters"
   "Major mode for viewing lobsters stories."

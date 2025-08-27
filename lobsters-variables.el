@@ -33,6 +33,14 @@
 
 ;;; Code:
 
+(defun lobsters-variables--get-hottest-endpoint ()
+  "Get the hottest endpoint URL."
+  lobsters-variables--hottest-endpoint)
+
+(defun lobsters-variables--get-newest-endpoint ()
+  "Get the newest endpoint URL."
+  lobsters-variables--newest-endpoint)
+
 (defcustom lobsters-variables-stories-per-page nil
   "Number of stories to display per page. Set to nil to show all stories."
   :type '(choice (const :tag "Show all" nil)

@@ -33,14 +33,7 @@
 
 ;;; Code:
 
-;; Autoload
 (defconst lobsters--root-dir (file-name-directory (or load-file-name buffer-file-name)))
-(add-to-list 'load-path lobsters--root-dir)
-(require 'lobsters-variables)
-(require 'lobsters-feed)
-(require 'lobsters-ui)
-(require 'visual-fill-column)
-(require 'cl-lib)
 
 (defgroup lobsters nil
   "A Lobsters client for Emacs."
@@ -52,14 +45,28 @@
   (setq visual-fill-column-width lobsters--max-width)
   (visual-fill-column-mode 1))
 
+(defun lobsters--ensure-loaded ()
+  "Ensure all lobsters modules are loaded."
+  (unless (featurep 'lobsters-variables)
+    (add-to-list 'load-path lobsters--root-dir)
+    (require 'lobsters-variables)
+    (require 'lobsters-feed)
+    (require 'lobsters-ui)
+    (require 'visual-fill-column)
+    (require 'cl-lib)))
+
+;;;###autoload
 (defun lobsters-hottest ()
   "View the hottest stories from Lobsters."
   (interactive)
+  (lobsters--ensure-loaded)
   (lobsters-feed--fetch-stories-async lobsters-variables--hottest-endpoint 'hottest))
 
+;;;###autoload
 (defun lobsters-newest ()
   "View the newest stories from Lobsters."
   (interactive)
+  (lobsters--ensure-loaded)
   (lobsters-feed--fetch-stories-async lobsters-variables--newest-endpoint 'newest))
 
 (provide 'lobsters)

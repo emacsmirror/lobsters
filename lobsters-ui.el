@@ -220,25 +220,39 @@
 	  (lobsters-ui--story-component story))
       (lobsters-ui--insert-formatted-text "No stories available.\n" nil "#ff0000"))))
 
-(defun lobsters-ui--goto-next-story ()
-  "Go to the next story."
-  (interactive)
-  (let ((separator-regex (concat "^" (regexp-quote (lobsters-ui--string-separator)) "$")))
-    (if (search-forward-regexp separator-regex nil t)
-	(progn
-	  (forward-line 2)
-	  (recenter-top-bottom))
-      (message "No more stories"))))
+(defun lobsters-ui--goto-next-story (&optional n)
+  "Move to Nth next story (previous if N is negative).
+N defaults to 1."
+  (interactive "p")
+  (let ((count (or n 1))
+	(separator-regex (concat "^" (regexp-quote (lobsters-ui--string-separator)) "$")))
+    (if (< count 0)
+	(lobsters-ui--goto-previous-story (- count))
+      (dotimes (_ count)
+	(if (search-forward-regexp separator-regex nil t)
+	    (progn
+	      (forward-line 2)
+	      (beginning-of-line)
+	      (recenter))
+	  (message "No more stories"))))))
 
-(defun lobsters-ui--goto-previous-story ()
-  "Go to the previous story."
-  (interactive)
-  (let ((separator-regex (concat "^" (regexp-quote (lobsters-ui--string-separator)) "$")))
-    (search-backward-regexp separator-regex nil t)
-    (unless (search-backward-regexp separator-regex nil t)
-      (goto-char (point-min)))
-    (forward-line 2)
-    (recenter-top-bottom)))
+(defun lobsters-ui--goto-previous-story (&optional n)
+  "Move to Nth previous story (next if N is negative).
+N defaults to 1."
+  (interactive "p")
+  (let ((count (or n 1))
+	(separator-regex (concat "^" (regexp-quote (lobsters-ui--string-separator)) "$")))
+    (if (< count 0)
+	(lobsters-ui--goto-next-story (- count))
+      (dotimes (_ count)
+	(search-backward-regexp separator-regex nil t)
+	(if (search-backward-regexp separator-regex nil t)
+	    (progn
+	      (forward-line 2)
+	      (beginning-of-line)
+	      (recenter))
+	  (goto-char (point-min))
+	  (widget-forward 1))))))
 
 (defun lobsters-ui--toggle-browser ()
   "Toggle between eww and system browser."
